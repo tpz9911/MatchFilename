@@ -1,0 +1,105 @@
+﻿<Window x:Class="MatchFilename.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MatchFilename"
+        mc:Ignorable="d"
+        Title="文件批量对应重命名工具" Height="580" Width="800"
+        WindowStartupLocation="CenterScreen"
+        Icon="logo.ico">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- 第1部分：来源目录 -->
+            <RowDefinition Height="Auto" />
+            <!-- 第2部分：目标目录 -->
+            <RowDefinition Height="Auto" />
+            <!-- 第3部分：后缀设置 -->
+            <RowDefinition Height="Auto" />
+            <!-- 第4部分：分析按钮 -->
+            <RowDefinition Height="*" />
+            <!-- 第5部分：预览表格 -->
+            <RowDefinition Height="Auto" />
+            <!-- 第6部分：操作按钮 -->
+        </Grid.RowDefinitions>
+
+        <!-- 第1部分：来源目录设置 -->
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="来源目录" VerticalAlignment="Center" FontWeight="Bold" />
+            <TextBox x:Name="TxtSourceFolder" Grid.Column="1" Margin="5,0" VerticalContentAlignment="Center" Height="28" TextChanged="OnFolderSelectionChanged" />
+            <Button x:Name="BtnBrowseSource" Grid.Column="2" Content="选择" Height="28" Click="BtnBrowseSource_Click" />
+        </Grid>
+
+        <!-- 第2部分：目标目录设置 -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="目标目录" VerticalAlignment="Center" FontWeight="Bold" />
+            <TextBox x:Name="TxtTargetFolder" Grid.Column="1" Margin="5,0" VerticalContentAlignment="Center" Height="28" TextChanged="OnFolderSelectionChanged" />
+            <Button x:Name="BtnBrowseTarget" Grid.Column="2" Content="选择" Height="28" Click="BtnBrowseTarget_Click" />
+        </Grid>
+
+        <!-- 第3部分：后缀设置 -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+            <CheckBox x:Name="ChkAddSuffix" Content="" VerticalAlignment="Center" Margin="0,0,4,0" />
+            <TextBlock Text="添加后缀：" VerticalAlignment="Center" />
+            <TextBox x:Name="TxtSuffix" Width="200" Height="26" VerticalContentAlignment="Center" Margin="5,0,0,0" />
+        </StackPanel>
+
+        <!-- 第4部分：分析按钮 -->
+        <Button x:Name="BtnAnalyze" Grid.Row="3" Content="分析" Width="100" Height="30" HorizontalAlignment="Left" Margin="0,0,0,10" IsEnabled="False" Click="BtnAnalyze_Click" />
+
+        <!-- 第5部分：预览表格 -->
+        <DataGrid x:Name="DgPreview" Grid.Row="4" Margin="0,0,0,10"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  GridLinesVisibility="Horizontal"
+                  HeadersVisibility="Column"
+                  AlternatingRowBackground="#F9F9F9">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="来源文件名" Binding="{Binding SourceFileName}" Width="*" />
+                <DataGridTextColumn Header="目标原文件名" Binding="{Binding OriginalFileName}" Width="*" />
+                <DataGridTemplateColumn Header="目标新文件名" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock x:Name="TxtNewFileName" Text="{Binding NewFileName}" VerticalAlignment="Center" Margin="4,0" />
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding HasConflict}" Value="True">
+                                    <Setter TargetName="TxtNewFileName" Property="Foreground" Value="Red" />
+                                    <Setter TargetName="TxtNewFileName" Property="FontWeight" Value="Bold" />
+                                    <Setter TargetName="TxtNewFileName" Property="ToolTip" Value="新文件名与其它文件冲突！" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- 第6部分：作者信息与操作按钮 -->
+        <Grid Grid.Row="5">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left" Margin="2,0,0,0">
+                <Hyperlink NavigateUri="https://github.com/tpz9911"
+                           RequestNavigate="Hyperlink_RequestNavigate"
+                           ToolTip="点击访问作者主页">
+                    PZ v0.99.260922
+                </Hyperlink>
+            </TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="BtnExecute" Content="执行" Width="90" Height="30" Margin="0,0,10,0" IsEnabled="False" Click="BtnExecute_Click" />
+                <Button x:Name="BtnUndo" Content="撤销" Width="90" Height="30" IsEnabled="False" Click="BtnUndo_Click" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
